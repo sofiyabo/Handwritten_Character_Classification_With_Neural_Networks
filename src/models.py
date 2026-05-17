@@ -38,8 +38,8 @@ class MLP:
 
     
     def softmax(self, z):
-        exp_Z = np.exp(z) # ver si hay que estabilizar el vector de Z
-
+        z_stable = z - np.max(z, axis=1, keepdims=True)
+        exp_Z = np.exp(z_stable)
         return exp_Z / np.sum(exp_Z, axis=1, keepdims=True)
 
     
@@ -125,7 +125,6 @@ class MLP:
         t = 1  # paso para adam
         lr_init = lr
         
-        #VER QUE NO SE PISEN LOS LR
 
         for epoch in range(epochs):
             
@@ -279,7 +278,6 @@ def train_pytorch_model(model, train_loader, val_loader, device,
             else:
                 epochs_no_improve += 1
                 if epochs_no_improve >= patience:
-                    print(f"Early stopping en época {epoch}")
                     break
 
     if best_weights is not None:
@@ -292,19 +290,13 @@ class MLP_M3(nn.Module):
     def __init__(self, layer_sizes, activation="relu", dropout=0.0):
         super().__init__()
         
-        activaciones = {
-            "relu":      nn.ReLU(),
-            "leakyrelu": nn.LeakyReLU(0.1),
-            "silu":      nn.SiLU(),
-            "gelu":      nn.GELU(),
-        }
         
         layers = []
         for i in range(len(layer_sizes) - 1):
             layers.append(nn.Linear(layer_sizes[i], layer_sizes[i+1]))
             
             if i < len(layer_sizes) - 2:  # capas ocultas
-                layers.append(activaciones[activation])
+                layers.append(self.get_activation(activation))
                 if dropout > 0:
                     layers.append(nn.Dropout(dropout))
         
@@ -313,3 +305,10 @@ class MLP_M3(nn.Module):
     def forward(self, x):
         return self.network(x)
     
+    def get_activation(self, name):
+        return {
+            "relu":      nn.ReLU(),
+            "leakyrelu": nn.LeakyReLU(0.1),
+            "silu":      nn.SiLU(),
+            "gelu":      nn.GELU(),
+        }[name]

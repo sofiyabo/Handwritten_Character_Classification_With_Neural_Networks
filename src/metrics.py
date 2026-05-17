@@ -1,5 +1,7 @@
 import numpy as np
 import torch
+import matplotlib.pyplot as plt
+
 
 def accuracy(ypred, ytrue):
     return np.mean(ytrue == ypred)
