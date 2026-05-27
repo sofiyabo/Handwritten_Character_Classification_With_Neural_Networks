@@ -43,6 +43,7 @@ This notebook covers the full deep learning pipeline for a multiclass classifica
 │   ├── data_splitting.py   # Train/val/test split
 │   ├── metrics.py          # Accuracy, F1, cross-entropy
 │   └── utils.py            # Helper functions
-├── Entrega_TP3.ipynb       # Main notebook
+├── notebooks
+│   ├──Entrega_TP3.ipynb       # Main notebook
 └── README.md
 ```
